@@ -1,6 +1,9 @@
 name: Ruff Linting
 
-on: [push]
+on:
+  pull_request:
+    branches: 
+      - main
 
 jobs:
   build:
@@ -8,6 +11,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.13"]
+
     steps:
     - uses: actions/checkout@v4
     - name: Ruff Linting
