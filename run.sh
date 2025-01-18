@@ -36,6 +36,5 @@ else
         --volume /app/.venv \
         --publish 8000:8000 \
         $INTERACTIVE \
-        "$IMAGE_ID" \
-        fastapi dev --host 0.0.0.0 app/main.py
+        "$IMAGE_ID"
 fi
