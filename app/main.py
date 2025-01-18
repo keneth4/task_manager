@@ -13,5 +13,5 @@ def hello():
 
 
 @app.get("/")
-async def root():
+async def root()
     return "Hello world"
