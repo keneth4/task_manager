@@ -1,12 +1,19 @@
 [project]
 name = "task-manager"
 version = "0.1.0"
-description = "Add your description here"
+description = "Simple task management API to allow users to create, update, delete, and retrieve tasks."
 readme = "README.md"
+authors = [{ name = "Keneth Ibarra", email = "k.ent@hotmail.com" }]
+
 requires-python = ">=3.13"
-dependencies = []
+
+dependencies = [
+    "fastapi[standard]>=0.115.6",
+    "sqlmodel>=0.0.22",
+]
 
 [dependency-groups]
 dev = [
+    "pytest>=8.3.4",
     "ruff>=0.9.2",
 ]
