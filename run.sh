@@ -19,11 +19,37 @@ else
     INTERACTIVE=""
 fi
 
-docker run \
-    --rm \
-    --volume .:/app \
-    --volume /app/.venv \
-    --publish 8000:8000 \
-    $INTERACTIVE \
-    $(docker build -q .) \
-    "$@"
+# Build the Docker image and get its ID
+IMAGE_ID=$(docker build -q .)
+
+if [ "$1" = "-test" ]; then
+    # Start the container in the background
+    CONTAINER_ID=$(docker run \
+        --rm \
+        --volume .:/app \
+        --volume /app/.venv \
+        --publish 8000:8000 \
+        --detach \
+        "$IMAGE_ID" \
+        fastapi dev --host 0.0.0.0 app/main.py)
+
+    # Wait for the API to initialize
+    echo "Waiting for the API to initialize..."
+
+    # Run tests
+    echo "Running tests..."
+    docker exec -it "$CONTAINER_ID" uv run pytest tests/
+
+    # Stop the container after tests complete
+    docker stop "$CONTAINER_ID"
+else
+    # Run the container normally, showing the logs for the FastAPI service
+    docker run \
+        --rm \
+        --volume .:/app \
+        --volume /app/.venv \
+        --publish 8000:8000 \
+        $INTERACTIVE \
+        "$IMAGE_ID" \
+        fastapi dev --host 0.0.0.0 app/main.py
+fi

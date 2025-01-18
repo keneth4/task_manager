@@ -1,17 +1,11 @@
-from fastapi import FastAPI
-
-app = FastAPI()
-
-
-@app.on_event("startup")
-async def startup_event():
-    print("Application running at: http://localhost:8000")
-
-
-def hello():
-    print("Hello world")
+from . import app
 
 
 @app.get("/")
 async def root():
     return "Hello world"
+
+
+@app.get("/ping")
+async def ping():
+    return {"message": "pong"}
