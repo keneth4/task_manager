@@ -88,12 +88,11 @@ A simple task management API to allow users to create, update, delete, and retri
 1. **Clone the Repository:**
     ```bash
     git clone https://github.com/keneth4/task_manager.git
-    cd task_manager
     ```
 
-2. **Build the Docker Image:**
+2. **Move into project directory:**
     ```bash
-    docker build --no-cache -t task-manager-api .
+    cd task_manager
     ```
 
 3. **Give execution permission to the `run` script:**
