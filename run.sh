@@ -19,8 +19,10 @@ else
     INTERACTIVE=""
 fi
 
-# Source the virtual environment
-source .venv/bin/activate
+# Source the virtual environment if it exists
+if [ -d .venv ]; then
+    . .venv/bin/activate
+fi
 
 # Copy the .env file to the root directory from the example file if it doesn't exist
 if [ ! -f .env ]; then
