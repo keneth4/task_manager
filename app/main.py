@@ -1,8 +1,12 @@
 import uuid
+from datetime import datetime
 from fastapi import HTTPException, Depends, Query
 from . import app, logger, get_session
-from app.models import Task, TaskPublic, TaskCreate, TaskUpdate
+from app.models import Task, TaskPublic, TaskCreate, TaskUpdate, StatusEnum
 from sqlmodel import Session, select
+
+
+STATUS_CHOICES_REGEX = r"|".join([status.value for status in StatusEnum])
 
 
 @app.get("/ping")
@@ -13,6 +17,8 @@ async def ping():
 @app.post("/tasks/", response_model=TaskPublic)
 def create_task(*, session: Session = Depends(get_session), task: TaskCreate):
     db_task = Task.model_validate(task)
+    if db_task.due_date:
+        db_task.due_date = db_task.due_date.replace(hour=0, minute=0, second=0, microsecond=0)
     session.add(db_task)
     session.commit()
     session.refresh(db_task)
@@ -24,10 +30,19 @@ def create_task(*, session: Session = Depends(get_session), task: TaskCreate):
 def read_tasks(
     *,
     session: Session = Depends(get_session),
-    offset: int = 0,
-    limit: int = Query(default=10, le=10),
+    status: str = Query(None, title="Status filter", regex=STATUS_CHOICES_REGEX),
+    due_date: str = Query(None, title="Due date filter"),
 ):
-    tasks = session.exec(select(Task).offset(offset).limit(limit)).all()
+    filter = []
+    if status:
+        filter.append(Task.status == StatusEnum(status))
+    if due_date:
+        try:
+            due_date = datetime.strptime(due_date, "%Y-%m-%d")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
+        filter.append(Task.due_date == due_date)
+    tasks = session.exec(select(Task).where(*filter)).all()
     return tasks
 
 
