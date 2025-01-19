@@ -39,7 +39,7 @@ def test_get_task_by_using_status_filter(client: TestClient):
     response_data = response.json()
 
     # Get the task by using status filter
-    response = client.get(f"/tasks/?status=in-progress")
+    response = client.get("/tasks/?status=in-progress")
     assert response.status_code == 200
     data["id"] = response_data["id"]
     data["due_date"] += "T00:00:00"
@@ -58,7 +58,7 @@ def test_get_task_by_using_due_date_filter(client: TestClient):
     response_data = response.json()
 
     # Get the task by using due date filter
-    response = client.get(f"/tasks/?due_date=2025-12-31")
+    response = client.get("/tasks/?due_date=2025-12-31")
     assert response.status_code == 200
     data["id"] = response_data["id"]
     data["due_date"] += "T00:00:00"
@@ -77,7 +77,7 @@ def test_get_task_by_using_both_filters(client: TestClient):
     response_data = response.json()
 
     # Get the task by using both filters
-    response = client.get(f"/tasks/?status=completed&due_date=2020-12-31")
+    response = client.get("/tasks/?status=completed&due_date=2020-12-31")
     assert response.status_code == 200
     data["id"] = response_data["id"]
     data["due_date"] += "T00:00:00"
