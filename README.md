@@ -1,7 +1,7 @@
 # Task Management API
 
-## Objective
-A simple task management API to allow users to create, update, delete, and retrieve tasks. Users can also filter tasks by status or due date.
+## Description
+A simple task management API to allow users to create, update, delete, and retrieve tasks. Users can also filter tasks by status or due date. Developed using FastAPI and SQLModel.
 
 ---
 
