@@ -19,9 +19,14 @@ else
     INTERACTIVE=""
 fi
 
+# if .venv does not exist or is empty do uv run
+if [ ! -d .venv ] || [ ! "$(ls -A .venv)" ]; then
+    uv run
+fi
+
 # Source the virtual environment if it exists
 if [ -d .venv ]; then
-    . .venv/bin/activate
+    source .venv/bin/activate
 fi
 
 # Copy the .env file to the root directory from the example file if it doesn't exist
