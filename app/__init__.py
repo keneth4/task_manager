@@ -1,7 +1,5 @@
-from typing import Optional
 from fastapi import FastAPI
 from sqlmodel import SQLModel, create_engine, Session
-from sqlalchemy.engine.base import Engine
 from contextlib import asynccontextmanager
 import logging
 import os
