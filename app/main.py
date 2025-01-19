@@ -22,7 +22,7 @@ def create_task(*, session: Session = Depends(get_session), task: TaskCreate):
     session.add(db_task)
     session.commit()
     session.refresh(db_task)
-    logger.info(f"Task with ID [{db_task.id}] created: '{db_task.title}'.")
+    logger.info(f"Task with ID \[{db_task.id}] created: '{db_task.title}'.")
     return db_task
 
 
@@ -70,7 +70,7 @@ def update_task(
     session.add(db_task)
     session.commit()
     session.refresh(db_task)
-    logger.info(f"Task with ID [{db_task.id}] updated: '{db_task.title}'.")
+    logger.info(f"Task with ID \[{db_task.id}] updated: '{db_task.title}'.")
     return db_task
 
 
@@ -81,5 +81,5 @@ def delete_task(*, session: Session = Depends(get_session), task_id: uuid.UUID):
         raise HTTPException(status_code=404, detail="Task not found")
     session.delete(db_task)
     session.commit()
-    logger.info(f"Task with ID [{db_task.id}] deleted: '{db_task.title}'.")
+    logger.info(f"Task with ID \[{db_task.id}] deleted: '{db_task.title}'.")
     return {"ok": True}
