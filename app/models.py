@@ -4,11 +4,11 @@ from datetime import datetime, timezone
 import uuid
 from enum import Enum
 
-from pydantic import constr
 from sqlmodel import Field, SQLModel
 from sqlalchemy import String, Index
 from sqlalchemy import Enum as SQLAlchemyEnum
 from sqlalchemy.sql import func
+from pydantic import Field as PydanticField
 
 
 class StatusEnum(str, Enum):
@@ -48,12 +48,14 @@ class TaskCreate(TaskBase):
 
 class TaskPublic(TaskBase):
     id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
+    title: str
+    description: Optional[str] = None
+    status: StatusEnum
+    due_date: Optional[datetime] = None
 
 
 class TaskUpdate(SQLModel):
-    title: str | None = constr(max_length=100, strip_whitespace=True)
-    description: str | None = None
-    status: StatusEnum | None = None
-    due_date: datetime | None = None
+    title: Optional[str] = PydanticField(max_length=100, default=None)
+    description: Optional[str] = None
+    status: Optional[StatusEnum] = None
+    due_date: Optional[datetime] = None
