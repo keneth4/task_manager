@@ -22,6 +22,11 @@ fi
 # Source the virtual environment
 source .venv/bin/activate
 
+# Copy the .env file to the root directory from the example file if it doesn't exist
+if [ ! -f .env ]; then
+    cp .env.example .env
+fi
+
 # Build the Docker image and get its ID
 IMAGE_ID=$(docker build -q .)
 
