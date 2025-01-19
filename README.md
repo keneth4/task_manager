@@ -32,6 +32,7 @@ A simple task management API to allow users to create, update, delete, and retri
         "due_date": "YYYY-MM-DD" // Optional
     }
     ```
+    *NOTE: All optionals must have the required format.*
 
     **Response:** Created task details.
 
@@ -53,7 +54,7 @@ A simple task management API to allow users to create, update, delete, and retri
         "due_date": "YYYY-MM-DD"
     }
     ```
-    *NOTE: All optional but must have the required format.*
+    *NOTE: All are optional but must have the required format.*
 
     **Response:** Updated task details.
 
