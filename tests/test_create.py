@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi.testclient import TestClient
 from . import session_fixture, client_fixture # noqa: F401
 
@@ -16,7 +17,7 @@ def test_create_task(client: TestClient):
     assert response_data["title"] == data["title"]
     assert response_data["description"] == data["description"]
     assert response_data["status"] == data["status"]
-    assert response_data["due_date"] == data["due_date"] + "T00:00:00"
+    assert response_data["due_date"] == datetime.strptime(data["due_date"], "%Y-%m-%d").isoformat()
     assert response_data["id"] is not None
 
 

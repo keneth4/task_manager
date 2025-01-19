@@ -1,4 +1,7 @@
+from datetime import datetime
+from sqlmodel import Session
 from fastapi.testclient import TestClient
+from app.models import Task, StatusEnum
 from . import session_fixture, client_fixture # noqa: F401
 
 
@@ -8,80 +11,104 @@ def test_get_all_tasks(client: TestClient):
     assert response.json() == []
 
 
-def test_get_task_by_uuid(client: TestClient):
+def test_get_task_by_uuid(session: Session, client: TestClient):
     # Create a task
-    data = {
-        "title": "Test Task",
-        "description": "This is a test task.",
-        "status": "pending",
-        "due_date": "2022-12-31",
-    }
-    response = client.post("/tasks/", json=data)
-    response_data = response.json()
+    task = Task(
+        title="Test Task",
+        description="This is a test task.",
+        due_date=datetime(2022, 12, 31),
+    )
+
+    session.add(task)
+    session.commit()
 
     # Get the task by UUID
-    response = client.get(f"/tasks/{response_data['id']}")
+    response = client.get(f"/tasks/{task.id}")
     assert response.status_code == 200
-    data["id"] = response_data["id"]
-    data["due_date"] += "T00:00:00"
-    assert response.json() == data
-
-
-def test_get_task_by_using_status_filter(client: TestClient):
-    # Create a task with status "in-progress"
-    data = {
-        "title": "Test Task",
-        "description": "This is a test task.",
-        "status": "in-progress",
-        "due_date": "2022-12-31",
+    assert response.json() == {
+        "id": str(task.id),
+        "title": task.title,
+        "description": task.description,
+        "status": StatusEnum(task.status).value,
+        "due_date": task.due_date.isoformat(),
     }
-    response = client.post("/tasks/", json=data)
-    response_data = response.json()
+
+
+def test_get_task_by_using_status_filter(session: Session, client: TestClient):
+    # Create a task with status "in-progress"
+    task = Task(
+        title="Test Task",
+        description="This is a test task.",
+        status=StatusEnum.IN_PROGRESS,
+        due_date=datetime(2022, 12, 31),
+    )
+
+    session.add(task)
+    session.commit()
 
     # Get the task by using status filter
     response = client.get("/tasks/?status=in-progress")
     assert response.status_code == 200
-    data["id"] = response_data["id"]
-    data["due_date"] += "T00:00:00"
-    assert response.json() == [data]
+    assert response.json() == [
+        {
+            "id": str(task.id),
+            "title": task.title,
+            "description": task.description,
+            "status": StatusEnum(task.status).value,
+            "due_date": task.due_date.isoformat(),
+        }
+    ]
 
 
-def test_get_task_by_using_due_date_filter(client: TestClient):
+def test_get_task_by_using_due_date_filter(session: Session, client: TestClient):
     # Create a task with due date "2025-12-31"
-    data = {
-        "title": "Test Task",
-        "description": "This is a test task.",
-        "status": "pending",
-        "due_date": "2025-12-31",
-    }
-    response = client.post("/tasks/", json=data)
-    response_data = response.json()
+    task = Task(
+        title="Test Task",
+        description="This is a test task.",
+        due_date=datetime(2025, 12, 31),
+    )
+
+    session.add(task)
+    session.commit()
 
     # Get the task by using due date filter
     response = client.get("/tasks/?due_date=2025-12-31")
     assert response.status_code == 200
-    data["id"] = response_data["id"]
-    data["due_date"] += "T00:00:00"
-    assert response.json() == [data]
+    assert response.json() == [
+        {
+            "id": str(task.id),
+            "title": task.title,
+            "description": task.description,
+            "status": StatusEnum(task.status).value,
+            "due_date": task.due_date.isoformat(),
+        }
+    ]
 
 
-def test_get_task_by_using_both_filters(client: TestClient):
+def test_get_task_by_using_both_filters(session: Session, client: TestClient):
     # Create a task with status "completed" and due date "2020-12-31"
-    data = {
-        "title": "Test Task",
-        "description": "This is a test task.",
-        "status": "completed",
-        "due_date": "2020-12-31",
-    }
-    response = client.post("/tasks/", json=data)
-    response_data = response.json()
+    task = Task(
+        title="Test Task",
+        description="This is a test task.",
+        status=StatusEnum.COMPLETED,
+        due_date=datetime(2020, 12, 31),
+    )
+
+    session.add(task)
+    session.commit()
 
     # Get the task by using both filters
     response = client.get("/tasks/?status=completed&due_date=2020-12-31")
     assert response.status_code == 200
-    data["id"] = response_data["id"]
-    data["due_date"] += "T00:00:00"
-    assert response.json() == [data]
+    assert response.json() == [
+        {
+            "id": str(task.id),
+            "title": task.title,
+            "description": task.description,
+            "status": StatusEnum(task.status).value,
+            "due_date": task.due_date.isoformat(),
+        }
+    ]
 
 
 def test_get_task_by_non_existent_uuid(client: TestClient):
