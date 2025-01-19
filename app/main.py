@@ -1,3 +1,4 @@
+from typing import Dict
 import uuid
 from datetime import datetime
 from fastapi import HTTPException, Depends, Query
@@ -15,7 +16,7 @@ async def ping():
 
 
 @app.post("/tasks/", response_model=TaskPublic)
-def create_task(*, session: Session = Depends(get_session), task: TaskCreate):
+def create_task(*, session: Session = Depends(get_session), task: TaskCreate) -> Task:
     db_task = Task.model_validate(task)
     if db_task.due_date:
         db_task.due_date = db_task.due_date.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -32,7 +33,7 @@ def read_tasks(
     session: Session = Depends(get_session),
     status: str = Query(None, title="Status filter", pattern=STATUS_CHOICES_REGEX),
     due_date: str = Query(None, title="Due date filter"),
-):
+) -> list[Task]:
     filter = []
     if status:
         filter.append(Task.status == StatusEnum(status))
@@ -47,7 +48,7 @@ def read_tasks(
 
 
 @app.get("/tasks/{task_id}", response_model=TaskPublic)
-def read_task(*, session: Session = Depends(get_session), task_id: uuid.UUID):
+def read_task(*, session: Session = Depends(get_session), task_id: uuid.UUID) -> Task:
     task = session.get(Task, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -60,7 +61,7 @@ def update_task(
     session: Session = Depends(get_session),
     task_id: uuid.UUID,
     task: TaskUpdate,
-):
+) -> Task:
     db_task = session.get(Task, task_id)
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -75,7 +76,7 @@ def update_task(
 
 
 @app.delete("/tasks/{task_id}")
-def delete_task(*, session: Session = Depends(get_session), task_id: uuid.UUID):
+def delete_task(*, session: Session = Depends(get_session), task_id: uuid.UUID) -> Dict[str, bool]:
     db_task = session.get(Task, task_id)
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
