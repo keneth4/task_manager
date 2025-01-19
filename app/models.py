@@ -43,7 +43,7 @@ class Task(TaskBase, table=True):
 
 
 class TaskCreate(TaskBase):
-    pass
+    title: str = PydanticField(max_length=100)
 
 
 class TaskPublic(TaskBase):
