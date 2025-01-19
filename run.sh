@@ -19,6 +19,9 @@ else
     INTERACTIVE=""
 fi
 
+# Source the virtual environment
+source .venv/bin/activate
+
 # Build the Docker image and get its ID
 IMAGE_ID=$(docker build -q .)
 
