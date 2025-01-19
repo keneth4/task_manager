@@ -50,6 +50,7 @@ else
         --volume .:/app \
         --volume /app/.venv \
         --publish 8000:8000 \
+        --name "task_manager_api" \
         $INTERACTIVE \
         "$IMAGE_ID"
 fi
