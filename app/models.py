@@ -1,0 +1,59 @@
+from typing import Optional
+from datetime import datetime, timezone
+
+import uuid
+from enum import Enum
+
+from pydantic import constr
+from sqlmodel import Field, SQLModel
+from sqlalchemy import String, Index
+from sqlalchemy import Enum as SQLAlchemyEnum
+from sqlalchemy.sql import func
+
+
+class StatusEnum(str, Enum):
+    PENDING = "pending"
+    IN_PROGRESS = "in-progress"
+    COMPLETED = "completed"
+
+
+class TaskBase(SQLModel):
+    __table_args__ = (
+        Index("ix_task_status", "status"),  # Explicitly add an index for the status column
+    )
+    title: str = Field(sa_column=String(length=100))
+    description: Optional[str] = None
+    status: StatusEnum = Field(
+        default_factory=lambda: StatusEnum.PENDING,
+        sa_column=SQLAlchemyEnum(StatusEnum),
+        )
+    due_date: Optional[datetime] = Field(default=None, index=True)
+
+
+class Task(TaskBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={"server_default": func.now()}
+    )
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={"onupdate": func.now()}
+    )
+
+
+class TaskCreate(TaskBase):
+    pass
+
+
+class TaskPublic(TaskBase):
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class TaskUpdate(SQLModel):
+    title: str | None = constr(max_length=100, strip_whitespace=True)
+    description: str | None = None
+    status: StatusEnum | None = None
+    due_date: datetime | None = None
