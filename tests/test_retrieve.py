@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from sqlmodel import Session
 from fastapi.testclient import TestClient
 from app.models import Task, StatusEnum
@@ -16,7 +16,7 @@ def test_get_task_by_uuid(session: Session, client: TestClient):
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)
@@ -30,7 +30,7 @@ def test_get_task_by_uuid(session: Session, client: TestClient):
         "title": task.title,
         "description": task.description,
         "status": StatusEnum(task.status).value,
-        "due_date": task.due_date.isoformat(),
+        "due_date": str(task.due_date),
     }
 
 
@@ -40,7 +40,7 @@ def test_get_task_by_using_status_filter(session: Session, client: TestClient):
         title="Test Task",
         description="This is a test task.",
         status=StatusEnum.IN_PROGRESS,
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)
@@ -55,7 +55,7 @@ def test_get_task_by_using_status_filter(session: Session, client: TestClient):
             "title": task.title,
             "description": task.description,
             "status": StatusEnum(task.status).value,
-            "due_date": task.due_date.isoformat(),
+            "due_date": str(task.due_date),
         }
     ]
 
@@ -65,7 +65,7 @@ def test_get_task_by_using_due_date_filter(session: Session, client: TestClient)
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2025, 12, 31),
+        due_date=date(2025, 12, 31),
     )
 
     session.add(task)
@@ -80,7 +80,7 @@ def test_get_task_by_using_due_date_filter(session: Session, client: TestClient)
             "title": task.title,
             "description": task.description,
             "status": StatusEnum(task.status).value,
-            "due_date": task.due_date.isoformat(),
+            "due_date": str(task.due_date),
         }
     ]
 
@@ -91,7 +91,7 @@ def test_get_task_by_using_both_filters(session: Session, client: TestClient):
         title="Test Task",
         description="This is a test task.",
         status=StatusEnum.COMPLETED,
-        due_date=datetime(2020, 12, 31),
+        due_date=date(2020, 12, 31),
     )
 
     session.add(task)
@@ -106,7 +106,7 @@ def test_get_task_by_using_both_filters(session: Session, client: TestClient):
             "title": task.title,
             "description": task.description,
             "status": StatusEnum(task.status).value,
-            "due_date": task.due_date.isoformat(),
+            "due_date": str(task.due_date),
         }
     ]
 

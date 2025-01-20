@@ -1,43 +1,16 @@
-from datetime import datetime
+from datetime import date
 from sqlmodel import Session
 from fastapi.testclient import TestClient
 from app.models import Task, StatusEnum
 from . import session_fixture, client_fixture # noqa: F401
 
 
-# def test_update_task(client: TestClient):
-#     # Create a task
-#     data = {
-#         "title": "Test Task",
-#         "description": "This is a test task.",
-#         "status": "pending",
-#         "due_date": "2022-12-31",
-#     }
-#     response = client.post("/tasks/", json=data)
-#     response_data = response.json()
-
-#     # Update the task
-#     updated_data = {
-#         "title": "Updated Task",
-#         "description": "This is an updated task.",
-#         "status": "in-progress",
-#         "due_date": "2023-12-31",
-#     }
-#     response = client.put(f"/tasks/{response_data['id']}", json=updated_data)
-#     response_data = response.json()
-
-#     assert response.status_code == 200
-#     assert response_data["title"] == updated_data["title"]
-#     assert response_data["description"] == updated_data["description"]
-#     assert response_data["status"] == updated_data["status"]
-#     assert response_data["due_date"] == updated_data["due_date"] + "T00:00:00"
-#     assert response_data["id"] is not None
 def test_update_task(session: Session, client: TestClient):
     # Create a task
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)
@@ -57,7 +30,7 @@ def test_update_task(session: Session, client: TestClient):
     assert response_data["title"] == updated_data["title"]
     assert response_data["description"] == updated_data["description"]
     assert response_data["status"] == updated_data["status"]
-    assert response_data["due_date"] == datetime.strptime(updated_data["due_date"], "%Y-%m-%d").isoformat()
+    assert response_data["due_date"] == updated_data["due_date"]
     assert response_data["id"] is not None
 
 
@@ -66,7 +39,7 @@ def test_update_task_no_data(session: Session, client: TestClient):
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)
@@ -80,7 +53,7 @@ def test_update_task_no_data(session: Session, client: TestClient):
     assert response_data["title"] == task.title
     assert response_data["description"] == task.description
     assert response_data["status"] == task.status
-    assert response_data["due_date"] == task.due_date.isoformat()
+    assert response_data["due_date"] == str(task.due_date)
     assert response_data["id"] is not None
 
 
@@ -99,7 +72,7 @@ def test_update_task_invalid_title_length(session: Session, client: TestClient):
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)
@@ -121,7 +94,7 @@ def test_update_task_invalid_status(session: Session, client: TestClient):
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)
@@ -143,7 +116,7 @@ def test_update_task_invalid_due_date(session: Session, client: TestClient):
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)

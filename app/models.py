@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 import uuid
 from enum import Enum
@@ -27,7 +27,7 @@ class TaskBase(SQLModel):
         default_factory=lambda: StatusEnum.PENDING,
         sa_column=SQLAlchemyEnum(StatusEnum),
         )
-    due_date: Optional[datetime] = Field(default=None, index=True)
+    due_date: Optional[date] = Field(default=None, index=True)
 
 
 class Task(TaskBase, table=True):
@@ -51,11 +51,11 @@ class TaskPublic(TaskBase):
     title: str
     description: Optional[str] = None
     status: StatusEnum
-    due_date: Optional[datetime] = None
+    due_date: Optional[date] = None
 
 
 class TaskUpdate(SQLModel):
     title: Optional[str] = PydanticField(max_length=100, default=None)
     description: Optional[str] = None
     status: Optional[StatusEnum] = None
-    due_date: Optional[datetime] = None
+    due_date: Optional[date] = None

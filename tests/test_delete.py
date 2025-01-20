@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 from app.models import Task
@@ -10,7 +10,7 @@ def test_delete_task(session: Session, client: TestClient):
     task = Task(
         title="Test Task",
         description="This is a test task.",
-        due_date=datetime(2022, 12, 31),
+        due_date=date(2022, 12, 31),
     )
 
     session.add(task)

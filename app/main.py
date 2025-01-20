@@ -18,8 +18,6 @@ async def ping():
 @app.post("/tasks/", response_model=TaskPublic)
 def create_task(*, session: Session = Depends(get_session), task: TaskCreate) -> Task:
     db_task = Task.model_validate(task)
-    if db_task.due_date:
-        db_task.due_date = db_task.due_date.replace(hour=0, minute=0, second=0, microsecond=0)
     session.add(db_task)
     session.commit()
     session.refresh(db_task)
@@ -34,25 +32,26 @@ def read_tasks(
     status: str = Query(None, title="Status filter", pattern=STATUS_CHOICES_REGEX),
     due_date: str = Query(None, title="Due date filter"),
 ) -> list[Task]:
-    filter = []
+    filters = []
     if status:
-        filter.append(Task.status == StatusEnum(status))
+        filters.append(Task.status == StatusEnum(status))
     if due_date:
         try:
-            due_date = datetime.strptime(due_date, "%Y-%m-%d")
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
-        filter.append(Task.due_date == due_date)
-    tasks = session.exec(select(Task).where(*filter)).all()
-    return tasks
+            due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
+        except ValueError as e:
+            raise HTTPException(
+                status_code=400, detail="Invalid date format. Use YYYY-MM-DD."
+            ) from e
+        filters.append(Task.due_date == due_date)
+    return session.exec(select(Task).where(*filters)).all()
 
 
 @app.get("/tasks/{task_id}", response_model=TaskPublic)
 def read_task(*, session: Session = Depends(get_session), task_id: uuid.UUID) -> Task:
-    task = session.get(Task, task_id)
-    if not task:
+    if task := session.get(Task, task_id):
+        return task
+    else:
         raise HTTPException(status_code=404, detail="Task not found")
-    return task
 
 
 @app.put("/tasks/{task_id}", response_model=TaskPublic)
