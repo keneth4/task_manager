@@ -119,29 +119,41 @@ A simple task management API to allow users to create, update, delete, and retri
 
 ## Future Enhancements
 
-1. **CI Testing:**
-   - Create a CI testing pipeline when requesting a PR to the main branch.
+1. **CI/CD Pipeline Enhancements:**
+   - Extend the CI pipeline to include automated testing for various environments (e.g., development, staging, production) to ensure consistent behavior across deployments.
+   - Add continuous deployment capabilities to streamline deployment to staging or production environments.
 
-2. **Authentication and Authorization:**
-   - Add user authentication (e.g., JWT-based).
-   - Allow only authorized users to access or modify their tasks.
+2. **Performance and Optimization:**
+   - Introduce rate limiting to prevent abuse and protect the server from excessive requests.
+   - Implement task queues for background processing, such as sending notifications for overdue tasks.
 
-3. **Enhanced Validation:**
+3. **Authentication and Authorization:** 
+   - Support third-party authentication providers (e.g., Google, Facebook) for seamless user login.
+   - Implement roles (e.g., admin, user) to provide granular permissions for accessing or modifying resources.
+
+4. **Enhanced Validation:**
    - Validate `due_date` is not in the past.
    - Restrict `status` transitions (e.g., cannot move from `completed` to `pending`).
 
-4. **Database Improvements:**
-   - Use PostgreSQL for production readiness.
+5. **Database Improvements:**
+   - Implement data archival strategies for tasks that are completed or inactive for a specified period, reducing database load.
+  
+6. **Localization:**
+   - Ensure proper handling of time zones for due dates and timestamps.
 
-5. **Logging and Monitoring:**
+7. **Logging and Monitoring:**
    - Improve logging for debugging and audit trails.
    - Set up monitoring and alerts.
 
-6. **Scalability:**
-   - Add support for deploying to cloud platforms (AWS, Azure, GCP).
+8. **Scalability:**
+   - Use tools like Terraform to define and manage infrastructure resources programmatically.
    - Implement load balancing and database replication.
+  
+9. **Monitoring:**
+   - Integrate distributed tracing tools like Jaeger or Zipkin to analyze the performance of API requests.
+   - Create visual dashboards using tools like Grafana to provide actionable insights into system performance.
 
-7. **UI Integration:**
+10. **UI Integration:**
    - Build a frontend interface for user interaction.
 
 ---
