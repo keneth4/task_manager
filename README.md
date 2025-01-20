@@ -81,7 +81,9 @@ A simple task management API to allow users to create, update, delete, and retri
 ## Setup and Run Instructions
 
 ### Prerequisites
-- Docker
+- [Docker](https://docs.docker.com/get-docker/) (Cross-platform tool available for Linux, macOS, and Windows.)
+
+**Note:** This setup has only been tested on Unix-based systems (Linux and macOS). For Windows users, you can use [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/install) to run the Bash scripts.
 
 ### Steps
 
