@@ -19,7 +19,15 @@ else
     INTERACTIVE=""
 fi
 
-# if .venv does not exist or is empty do uv run
+
+# Verify that uv is installed, if not install it
+if ! command -V uv &> /dev/null; then
+    echo "uv is not installed, installing it..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+echo "$(uv -V)"
+
+# Verify that the virtual environment exists and is populated, if not create initialize project
 if [ ! -d .venv ] || [ ! "$(ls -A .venv)" ]; then
     uv run
 fi
