@@ -6,10 +6,13 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
     - name: Run tests
-      run: chmod +x ./run.sh && ./run.sh -test
+      run: uv run pytest
+
